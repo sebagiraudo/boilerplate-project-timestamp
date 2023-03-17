@@ -32,6 +32,26 @@ var listener = app.listen(process.env.PORT, function () {
 });
 
 app.get("/api/:date?", function(req,res){
-  //req.params.date
-  res.json({"unix": Math.floor(new Date(req.params.date).getTime())})
+  let myDate = req.params.date;
+
+  if (myDate){
+    if (new Date(myDate).toString() !== "Invalid Date"){
+      res.json({
+        "unix": Math.floor(new Date(myDate).getTime()), 
+        "utc": new Date(req.params.date).toUTCString()
+      })
+    } else if (new Date(parseInt(myDate)).toString() !== "Invalid Date"){
+      res.json({
+        "unix": Number(myDate),
+        "utc": new Date(parseInt(myDate)).toUTCString()
+      })
+    } else {
+      res.json({"error": "Invalid Date"})
+    }
+  } else{
+    res.json({
+      "unix": Date.now(),
+      "utc": new Date(Date.now()).toString()
+    })
+  }
 })
